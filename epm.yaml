@@ -1,0 +1,89 @@
+jobs:
+
+- name: accountA
+  job:
+    set:
+      val: 5D41A99422188EF313C51A33A48C500F83180804
+
+- name: accountB
+  job:
+    set:
+      val: 9279622BF7ED95F8E508625BB0540B49C35DBEA1
+
+- name: setBlueRole
+  job:
+    permission:
+      action: add_role
+      target: $accountA
+      role: "blue"
+      wait: true
+
+- name: setRedRole
+  job:
+    permission:
+      action: add_role
+      target: $accountB
+      role: "red"
+      wait: true
+
+- name: incrementorContract
+  job:
+    deploy:
+      contract: Incrementor.sol
+      instance: Incrementor
+      wait: true
+
+- name: increment1
+  job:
+    call:
+      source: $accountA
+      destination: $incrementorContract
+      data: increment
+      wait: true
+
+- name: increment2
+  job:
+    call:
+      source: $accountA
+      destination: $incrementorContract
+      data: increment
+      wait: true
+
+- name: increment3
+  job:
+    call:
+      source: $accountB
+      destination: $incrementorContract
+      data: increment
+      wait: true
+
+- name: increment4
+  job:
+    call:
+      source: $accountB
+      destination: $incrementorContract
+      data: increment
+      wait: true
+
+- name: terminateContract
+  job:
+    call:
+      destination: $incrementorContract
+      data: terminate
+      wait: true
+
+- name: removeBlueRole
+  job:
+    permission:
+      action: rm_role
+      target: $accountA
+      role: "blue"
+      wait: true
+
+- name: removeRedRole
+  job:
+    permission:
+      action: rm_role
+      target: $accountB
+      role: "red"
+      wait: true
